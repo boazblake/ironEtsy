@@ -15,3 +15,7 @@ html {
     font-size: medium;
     vertical-align: top;
 }
+
+#container {
+	font-size: 20px;
+}

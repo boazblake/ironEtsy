@@ -15,7 +15,6 @@ var ironEtsyRouter = Backbone.Router.extend({
     handle_Detail_Data: function(searchInput) {
         var etsy_Detail_Model = new defaultModel()
         var etsy_Detail_View = new detailView(etsy_Detail_Model)
-
         etsy_Detail_Model.fetch({
 
             data: {
@@ -49,8 +48,8 @@ var ironEtsyRouter = Backbone.Router.extend({
             }
         })
     },
-    initialize: function() {
 
+    initialize: function() {
         Backbone.history.start()
     }
 })
@@ -85,8 +84,8 @@ var searchView = Backbone.Model.extend({
     },
 
     _render: function() {
-            console.log(data)
-        // console.log(this.model.data.get('data'))
+        console.log(data)
+            // console.log(this.model.data.get('data'))
     }
 
 })
@@ -98,27 +97,29 @@ var detailView = Backbone.Model.extend({
         this.model = aModel
         var boundRender = this._render.bind(this)
         this.model.on('sync', boundRender)
+        console.log(this.model)
     },
 
     _render: function() {
+        console.log(data)
+
     }
 
 })
 
 var defaultView = Backbone.View.extend({
-    el: '#container',
+        el: '#container',
 
-    initialize: function(aModel) {
-        this.model = aModel
-        var boundRender = this._render.bind(this)
-        this.model.on('sync', boundRender)
-        console.log(this.model)
-        
-    },
+        initialize: function(aModel) {
+            this.model = aModel
+            var boundRender = this._render.bind(this)
+            this.model.on('sync', boundRender)
+            console.log(this.model)
 
-    _render: function() {
-    }
+        },
 
-})
+        _render: function() {}
+
+    })
     ////////////////////////////////////////////////////
 var ironEtsy = new ironEtsyRouter()

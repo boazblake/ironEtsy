@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: sans-serif;
+}
+
+.alignChildren {
+    font-size: 0;
+}
+
+.alignChildren > * {
+    display: inline-block;
+    font-size: medium;
+    vertical-align: top;
+}

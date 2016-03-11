@@ -3,6 +3,7 @@ console.log(Backbone)
 console.log(window.location.hash)
 var etsyKey = 'uhdk37cf5h6h7dcxamb6eb9x'
 var url = 'https://openapi.etsy.com/v2/listings/active?'
+var images = 'includes=Images,Shop'
 var searchBar = document.querySelector('#searchBar')
 
 
@@ -16,7 +17,7 @@ var ironEtsyRouter = Backbone.Router.extend({
     },
 
 
-    handle_Detail_Data: function(searchInput) {
+    handle_Detail_Data: function() {
         var etsy_Detail_Model = new defaultModel()
         var etsy_Detail_View = new detailView(etsy_Detail_Model)
         etsy_Detail_Model.fetch({
@@ -29,8 +30,13 @@ var ironEtsyRouter = Backbone.Router.extend({
 
 
     handle_Search_Data: function(keywords) {
+        console.log(keywords)
+
         var etsy_Search_Model = new defaultModel()
         var etsy_Search_View = new defaultView(etsy_Search_Model)
+
+        etsy_Search_Model.url += '/' + keywords
+        console.log(etsy_Search_Model.url)
 
         etsy_Search_Model.fetch({
 
@@ -68,18 +74,15 @@ var ironEtsyRouter = Backbone.Router.extend({
 
 var detailModel = Backbone.Model.extend({
     // 'https://openapi.etsy.com/v2/listings/active?     api_key={YOUR_API_KEY}'
-    url: 'https://openapi.etsy.com/v2/listings/active?',
+    url: url,
     api_key: etsyKey
 })
 
 var defaultModel = Backbone.Model.extend({
     // 'https://openapi.etsy.com/v2/listings/active?     api_key={YOUR_API_KEY}'
-    url: 'https://openapi.etsy.com/v2/listings/active?',
+    url: url+images,
     api_key: etsyKey
 })
-
-
-
 
 
 
@@ -113,7 +116,7 @@ var searchView = Backbone.Model.extend({
     },
 
     _render: function() {
-            // console.log(this.model.data.get('data'))
+           console.log('search')
     }
 
 })
@@ -133,19 +136,22 @@ var defaultView = Backbone.View.extend({
         },
 
         _runSearch:function(keypress){
-        	console.log(keypress.target)
-
-        	window.location.hash = 'search/' + keypress.target.etsyid
+        	// console.log(keypress.keyCode)
+        	if (keypress.keyCode === 13){
+        		var search = '/'+keypress.target.value
+        		window.location.hash = 'search' + search
+        	}
         },
 
         _render: function() {
-            var listOfDescriptions = this.model.attributes.results
-            listOfTitles = ''
-            this.el.innerHTML = '<div class="hed">'
-            this.el.innerHTML += 	'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
-            this.el.innerHTML += '</div>'
+            var listOfDescriptions = this.model.attributes
+            searchString = '<div class="hed">'
+            searchString += 	'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
+            searchString += '</div>'
+            this.el.innerHTML = searchString
+            	console.log(listOfDescriptions)
             
-           
+            listOfTitles = ''
             // console.log(this.model.get('listing_id'))
             for (var i = 0; i < listOfDescriptions.length; i++){
             	listOfTitles = listOfDescriptions[i].title
@@ -158,4 +164,6 @@ var defaultView = Backbone.View.extend({
 
     })
     ////////////////////////////////////////////////////
+
+
 var ironEtsy = new ironEtsyRouter()

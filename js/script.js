@@ -73,7 +73,7 @@ var DetailModel = Backbone.Model.extend({
 	    	console.log(queryStr)
 
 	    	if (queryStr){qStr =+queryStr}
-	    	var u = 'https://openapi.etsy.com/v2/listings/active/'+queryStr +'/includes=Images?&callback=?&api_key='+this.api_key        //active.js?includes=Images,&'+qStr+'&callback=?&api_key='+this.api_key //fields=listing_id,title,price,url,description?
+	    	var u = 'https://openapi.etsy.com/v2/listings/'+queryStr+'?includes=Images&callback=?&api_key='+this.api_key
 	    	console.log(u)
 	    	return u
     },
@@ -97,7 +97,7 @@ var MultiModel = Backbone.Model.extend({
 	    	var ur = u.split('/')
 			var queryStr = ur[1]
 	    	console.log(queryStr)
-    	if(queryStr){qStr = "&"+queryStr}
+    	if(queryStr){qStr = "&keywords="+queryStr}
     	var u = 'https://openapi.etsy.com/v2/listings/active.js?fields=listing_id,title,price,url&includes=Images(url_75x75),Shop&callback=?&api_key='+this.api_key+qStr
     	console.log(u)
     	return u
@@ -125,9 +125,10 @@ var DetailView = Backbone.Model.extend({
     	var pre_IndexNumber = window.location.hash.split('/')
     	var indexNumber = pre_IndexNumber[2]
     	console.log(indexNumber)
+      	console.log(data) 
        var listOfResults = data.attributes.results 	
        var item = listOfResults[indexNumber]
-       var description = item.description
+       // var description = item.description
       	console.log(item) 
     },
 
@@ -221,9 +222,9 @@ var MultiView = Backbone.View.extend({
         _render: function() {
             var listOfResults = this.model.attributes.results
 
-            searchString = '<div class="hed">'
-            searchString += 	'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
-            searchString += '</div>'
+            searchStringHed = '<div class="hed">'
+            searchStringHed += 	'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
+            searchStringHed += '</div>'
             	console.log(listOfResults)
 
             
@@ -248,10 +249,10 @@ var MultiView = Backbone.View.extend({
             	console.log(listOfResults[i])
 
             	if(this.searchQuery) {this.el.innerHTML 		= "<h3>Results from: " + this.searchQuery + "</h3>"}
+            	var searchStringBod
+            	searchStringBod += '<div class="item" indexNumber="'+[i] +'" itemNumber="'+ itemNumber+'"><img src="'+imageURL+'"><h3 class="title">'+itemTitle+'</h3><p class="itemPrice">'+itemPrice+'</p></div>'
 
-            	searchString += '<div class="item" indexNumber="'+[i] +'" itemNumber="'+ itemNumber+'"><img src="'+imageURL+'"><h3 class="title">'+itemTitle+'</h3><p class="itemPrice">'+itemPrice+'</p></div>'
-
-            this.el.innerHTML = searchString
+            this.el.innerHTML = searchStringHed + searchStringBod
 
 
             }

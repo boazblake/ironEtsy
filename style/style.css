@@ -6,6 +6,11 @@ html {
     font-family: sans-serif;
 }
 
+.search {
+	width: 80%;
+	margin: 0, auto;
+}
+
 .alignChildren {
     font-size: 0;
 }
@@ -16,16 +21,41 @@ html {
     vertical-align: top;
 }
 
+
+#container{
+	height: 80vh;
+}
+
+.hed {
+	margin: 1%;
+}
+
+
 .bod *{
 	border: 1px solid slategrey;
 }
 
-img {
+.itemContainer{
 	width: 80%;
+	height: 100%;
+	padding: 10%;
+}
+
+.item {
+	display: inline-block;
+	width: 30%;
+	vertical-align: top;
+	margin: 1%;
+}
+
+
+img {
+	width: 100%;
 }
 
 .multiImg {
-	width: 20%;
+	width: 100%;
+	overflow:hidden;
 }
 .multiImg.onhover {
 	width: 80%;

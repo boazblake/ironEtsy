@@ -1,6 +1,3 @@
-console.log($);
-console.log(Backbone)
-console.log(window.location.hash)
 var etsyKey = 'uhdk37cf5h6h7dcxamb6eb9x'
 var url = 'https://openapi.etsy.com/v2/listings/active?'
 var images = 'includes=Images,Shop'
@@ -12,7 +9,7 @@ var searchBar = document.querySelector('#searchBar')
 var ironEtsyRouter = Backbone.Router.extend({
 
     routes: {
-        'details/:id/:position': 'handle_Detail_Data',
+        'details/:id': 'handle_Detail_Data',
         'search/:keywords': 'handle_Search_Data',
         '*home': 'handle_Default_Data'
     },
@@ -31,9 +28,7 @@ var ironEtsyRouter = Backbone.Router.extend({
         var Search_Model = new MultiModel()
         var Search_View = new MultiView(Search_Model)
 
-        Search_Model.url( "keywords="+keywords )
-
-        console.log(this.url)
+        Search_Model.url("keywords=" + keywords)
 
         Search_Model.fetch()
     },
@@ -58,49 +53,48 @@ var ironEtsyRouter = Backbone.Router.extend({
 // Model
 
 var DetailModel = Backbone.Model.extend({
-    url: function(queryStr){
-    	
-    	this.url = this._buildURL
-    	
-    	return this._buildURL(queryStr)
+    url: function(queryStr) {
+
+        this.url = this._buildURL
+
+        return this._buildURL(queryStr)
     },
 
-    _buildURL: function(queryStr){
-	    	var u = window.location.hash.substr(1)
-	    	var ur = u.split('/')
-	    	var qStr = ''
-			var queryStr = ur[1]
-	    	console.log(queryStr)
+    _buildURL: function(queryStr) {
+        var u = window.location.hash.substr(1)
+        var ur = u.split('/')
+        var qStr = ''
+        var queryStr = ur[1]
 
-	    	if (queryStr){qStr =+queryStr}
-	    	var u = 'https://openapi.etsy.com/v2/listings/'+queryStr+'?includes=Images&callback=?&api_key='+this.api_key
-	    	console.log(u)
-	    	return u
+        if (queryStr) { qStr = +queryStr }
+        var u = 'https://openapi.etsy.com/v2/listings/' + queryStr + '.js?&includes=Images(url_fullxfull)&callback=?&api_key=' + this.api_key
+        console.log(u)
+        
+        return u
     },
-
-
 
     api_key: etsyKey
 })
 
 var MultiModel = Backbone.Model.extend({
     // 'https://openapi.etsy.com/v2/listings/active?     api_key={YOUR_API_KEY}'
-     url: function(queryStr){
-    	this.url = this._buildURL
-    	return this._buildURL(queryStr)
+    url: function(queryStr) {
+        console.log(queryStr)
+        this.url = this._buildURL
+        return this._buildURL(queryStr)
     },
 
-    _buildURL: function(queryStr){
-    	var qStr = ''
-    		console.log(queryStr)
-			var u = window.location.hash.substr(1)	
-	    	var ur = u.split('/')
-			var queryStr = ur[1]
-	    	console.log(queryStr)
-    	if(queryStr){qStr = "&keywords="+queryStr}
-    	var u = 'https://openapi.etsy.com/v2/listings/active.js?fields=listing_id,title,price,url&includes=Images(url_75x75),Shop&callback=?&api_key='+this.api_key+qStr
-    	console.log(u)
-    	return u
+    _buildURL: function(queryStr) {
+        var qStr = ''
+        console.log(queryStr)
+        var u = window.location.hash.substr(1)
+        var ur = u.split('/')
+        var queryStr = ur[1]
+        console.log(queryStr)
+        if (queryStr) { qStr = "&keywords=" + queryStr }
+        var u = 'https://openapi.etsy.com/v2/listings/active.js?fields=listing_id,title,price,url&includes=Images(url_75x75),Shop&callback=?&api_key=' + this.api_key + qStr
+        console.log(u)
+        return u
     },
 
     api_key: etsyKey
@@ -112,47 +106,72 @@ var MultiModel = Backbone.Model.extend({
 // View
 
 var DetailView = Backbone.Model.extend({
-    
+
     el: '.bod',
 
     initialize: function(aModel) {
         this.model = aModel
         var boundRender = this._render.bind(this)
         this.model.on('sync', boundRender)
+        console.log(aModel)
     },
 
     _render: function(data, indexNumber) {
-    	var pre_IndexNumber = window.location.hash.split('/')
-    	var indexNumber = pre_IndexNumber[2]
-    	console.log(indexNumber)
-      	console.log(data) 
-       var listOfResults = data.attributes.results 	
-       var item = listOfResults[indexNumber]
-       // var description = item.description
-      	console.log(item) 
+        // console.log(data) 
+        var listOfResults = this.model.attributes.results //data.attributes.results 	
+
+        var item = listOfResults
+        var title = item[0].title
+        var desc = item[0].description
+        var price = item[0].price
+        var imageArray = item[0].Images
+        var imageObject = imageArray[0]
+        for (var key in imageObject) {
+            var imageURL = imageObject[key]
+
+            // var imageCollection = ''
+            // 	for (var i = 0; i < imageArray.length; i++){
+            // 	imageCollection += imageArray[i]
+            // 	console.log(imageCollection)
+            // 	}
+
+        searchStringHed  = '<div class="hed">'
+		searchStringHed += 		'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
+		searchStringHed += '</div>'
+
+		var stringBod = '<div class="item">'
+		stringBod 	 += 	'<img src="' + imageURL +'">'
+		stringBod 	 += 	'<h3 class="title">' + title + '</h3>'
+		stringBod 	 += 	'<p class="Price">' + price + '</p>'
+		stringBod 	 += 	'<p class="Desc">' + desc + '</p>'
+		stringBod 	 += '</div>'
+
+		            this.el.innerHTML = searchStringHed + stringBod
+		            console.log(stringBod)
+        }
     },
 
-    events:{
-     // «evtType»  «domEL-selector» :  »
-    	'keypress #searchBar':'_runSearch',
-    	'click .item': '_openItem',
-    	'mouseover img': '_imageHover'
+    events: {
+        // «evtType»  «domEL-selector» :  »
+        'keypress #searchBar': '_runSearch',
+        'click .item': '_openItem',
+        'mouseover img': '_imageHover'
     },
 
-    _imageHover:function(){
-    	console.log('hoevr event')
+    _imageHover: function() {
+        console.log('hover event')
     },
 
-    _openItem:function(){
-    	console.log('click event')
+    _openItem: function() {
+        console.log('click event')
     },
 
-    _runSearch:function(keypress){
-    	// console.log(keypress.keyCode)
-    	if (keypress.keyCode === 13){
-    		var search = '/'+keypress.target.value
-    		window.location.hash = 'search' + search
-    	}
+    _runSearch: function(keypress) {
+        // console.log(keypress.keyCode)
+        if (keypress.keyCode === 13) {
+            var search = '/' + keypress.target.value
+            window.location.hash = 'search' + search
+        }
     }
 
 })
@@ -173,86 +192,76 @@ var DetailView = Backbone.Model.extend({
 
 var MultiView = Backbone.View.extend({
         el: '.bod',
-        searchQuery: null,
-        
+        // searchQuery: null,
+
         initialize: function(aModel, qry) {
             this.model = aModel
 
-            if(qry){this.searchQuery = qry}
-             
+            // if(qry){this.searchQuery = qry
+            // 	console.log(searchQuery)}
+            //  console.log(qry)
+
 
             var boundRender = this._render.bind(this)
             this.model.on('sync', boundRender)
-            
+
         },
 
-        events:{
-         // «evtType»  «domEL-selector» :  »
-        	'keypress #searchBar':'_runSearch',
-        	'click .item': '_openItem',
-        	'mouseover img': '_imageHover'
+        events: {
+            // «evtType»  «domEL-selector» :  »
+            'keypress #searchBar': '_runSearch',
+            'click .item': '_openItem',
+            'mouseover img': '_imageHover'
         },
 
-        _runSearch:function(keypress){
-        	// console.log(keypress.keyCode)
-        	if (keypress.keyCode === 13){
-        		var search = '/'+keypress.target.value
-        		window.location.hash = 'search' + search
-        	}
+        _runSearch: function(keypress) {
+            if (keypress.keyCode === 13) {
+                var search = '/' + keypress.target.value
+                window.location.hash = 'search' + search
+            }
         },
 
-        _openItem:function(click){
-        	// console.log(itemNumber)
-        	click.preventDefault()
-        	var itemNumber = click.currentTarget
-        	var itemID = itemNumber.attributes.itemnumber.value
-        	var indexNumber = itemNumber.attributes.indexNumber.value
-        	console.log(itemNumber)
-        	console.log(itemID)
-        	console.log(indexNumber)
-        	var deets = '/' + itemID + '/'+indexNumber
-        	console.log(deets)
-        	window.location.hash = 'details' + deets
+        _openItem: function(click) {
+            click.preventDefault()
+            var itemNumber = click.currentTarget
+            var itemID = itemNumber.attributes.itemnumber.value
+            console.log(itemNumber)
+            var deets = '/' + itemID
+            window.location.hash = 'details' + deets
         },
 
-        _imageHover:function(){
-        	console.log('place onHoverImage')
+        _imageHover: function() {
+            console.log('place onHoverImage')
         },
 
         _render: function() {
             var listOfResults = this.model.attributes.results
 
             searchStringHed = '<div class="hed">'
-            searchStringHed += 	'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
+            searchStringHed += '<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
             searchStringHed += '</div>'
-            	console.log(listOfResults)
 
-            
             listOfTitles = ''
-            // console.log(this.model.get('listing_id'))
-            for (var i = 0; i < listOfResults.length; i++){
+            for (var i = 0; i < listOfResults.length; i++) {
 
-            	// itemURL = listOfResults[i].url
+                itemTitle = listOfResults[i].title
 
-            	itemTitle = listOfResults[i].title
+                itemNumber = listOfResults[i].listing_id
 
-            	itemNumber = listOfResults[i].listing_id
+                itemPrice = listOfResults[i].price
 
-            	itemPrice = listOfResults[i].price
+                imageURL = listOfResults[i].Images[0].url_75x75
 
-            	imageURL = listOfResults[i].Images[0].url_75x75
-
-            	onHoverImage = listOfResults[i].Images[i]
+                onHoverImage = listOfResults[i].Images[i]
 
 
+                var searchHed = ''
+                console.log(listOfResults[i])
+                    // if(typeof this.searchQuery === 'string') {searchHed += "<h3>Results from: " + this.searchQuery + "</h3>"}
+                var stringBod =
+                    stringBod += '<div class="item" indexNumber="' + [i] + '" itemNumber="' + itemNumber + '"><img src="' + imageURL + '"><h3 class="title">' + itemTitle + '</h3><p class="itemPrice">' + itemPrice + '</p></div>'
 
-            	console.log(listOfResults[i])
-
-            	if(this.searchQuery) {this.el.innerHTML 		= "<h3>Results from: " + this.searchQuery + "</h3>"}
-            	var searchStringBod
-            	searchStringBod += '<div class="item" indexNumber="'+[i] +'" itemNumber="'+ itemNumber+'"><img src="'+imageURL+'"><h3 class="title">'+itemTitle+'</h3><p class="itemPrice">'+itemPrice+'</p></div>'
-
-            this.el.innerHTML = searchStringHed + searchStringBod
+                this.el.innerHTML = searchStringHed + stringBod
 
 
             }

@@ -17,6 +17,9 @@ html {
 }
 
 .bod *{
-	/* font-size: 20px; */
 	border: 1px solid slategrey;
+}
+
+img.onhover {
+	width: 2em;
 }

@@ -135,29 +135,7 @@ var DetailView = Backbone.View.extend({
     },
 
     _render: function(data, indexNumber) {
-<<<<<<< HEAD
-        console.log('......router Detail view...........')
 
-
-        // console.log(data) 
-        var listOfResults = this.model.attributes.results //data.attributes.results 	
-
-        var item = listOfResults
-        var title = item[0].title
-        var desc = item[0].description
-        var price = item[0].price
-        var imageArray = item[0].Images
-        var imageObject = imageArray[0]
-        for (var key in imageObject) {
-            var imageURL = imageObject[key]
-
-            // var imageCollection = ''
-            // 	for (var i = 0; i < imageArray.length; i++){
-            // 	imageCollection += imageArray[i]
-            // 	console.log(imageCollection)
-            // 	}
-
-=======
         console.log(this.el)
         var title = this.model.get('title')
 
@@ -167,7 +145,7 @@ var DetailView = Backbone.View.extend({
         // var imageObject = this.model.get('Images')
         var imageURL = imageArray.url_fullxfull
         console.log(imageArray)
->>>>>>> collections
+
         searchStringHed  = '<div class="hed">'
 		searchStringHed += 		'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
         searchStringHed +=       '<a href="#home"><button class="homeButton">HOME</a>'
@@ -236,14 +214,8 @@ var MultiView = Backbone.View.extend({
         },
 
         _render: function() {
-<<<<<<< HEAD
-        console.log('......router Multi view...........')
 
-            var listOfResults = this.model.attributes.results
-
-=======
             var listOfResults = this.collection.models
->>>>>>> collections
             searchStringHed = '<div class="hed">'
             searchStringHed += '<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
             searchStringHed += '</div>'

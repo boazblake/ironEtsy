@@ -116,6 +116,8 @@ var DetailView = Backbone.Model.extend({
     },
 
     _render: function(data, indexNumber) {
+        console.log('......router Detail view...........')
+
 
         // console.log(data) 
         var listOfResults = this.model.attributes.results //data.attributes.results 	
@@ -201,6 +203,8 @@ var MultiView = Backbone.View.extend({
         },
 
         _render: function() {
+        console.log('......router Multi view...........')
+
             var listOfResults = this.model.attributes.results
 
             searchStringHed = '<div class="hed">'

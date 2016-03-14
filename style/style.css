@@ -20,6 +20,13 @@ html {
 	border: 1px solid slategrey;
 }
 
-img.onhover {
-	width: 2em;
+img {
+	width: 80%;
+}
+
+.multiImg {
+	width: 20%;
+}
+.multiImg.onhover {
+	width: 80%;
 }

@@ -92,7 +92,7 @@ var MultiModel = Backbone.Model.extend({
         var queryStr = ur[1]
         console.log(queryStr)
         if (queryStr) { qStr = "&keywords=" + queryStr }
-        var u = 'https://openapi.etsy.com/v2/listings/active.js?fields=listing_id,title,price,url&includes=Images(url_75x75),Shop&callback=?&api_key=' + this.api_key + qStr
+        var u = 'https://openapi.etsy.com/v2/listings/active.js?fields=listing_id,title,price,url&includes=Images,Shop&callback=?&api_key=' + this.api_key + qStr
         console.log(u)
         return u
     },
@@ -106,17 +106,17 @@ var MultiModel = Backbone.Model.extend({
 // View
 
 var DetailView = Backbone.Model.extend({
+    el: document.querySelector('.bod'),  
 
-    el: '.bod',
 
     initialize: function(aModel) {
         this.model = aModel
         var boundRender = this._render.bind(this)
         this.model.on('sync', boundRender)
-        console.log(aModel)
     },
 
     _render: function(data, indexNumber) {
+
         // console.log(data) 
         var listOfResults = this.model.attributes.results //data.attributes.results 	
 
@@ -137,6 +137,7 @@ var DetailView = Backbone.Model.extend({
 
         searchStringHed  = '<div class="hed">'
 		searchStringHed += 		'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
+        searchStringHed +=       '<a href="#home"><button class="homeButton">HOME</a>'
 		searchStringHed += '</div>'
 
 		var stringBod = '<div class="item">'
@@ -147,15 +148,24 @@ var DetailView = Backbone.Model.extend({
 		stringBod 	 += '</div>'
 
 		            this.el.innerHTML = searchStringHed + stringBod
-		            console.log(stringBod)
         }
     },
+
+
 
     events: {
         // «evtType»  «domEL-selector» :  »
         'keypress #searchBar': '_runSearch',
         'click .item': '_openItem',
-        'mouseover img': '_imageHover'
+        'mouseover img': '_imageHover',
+    },
+
+    _runSearch: function(keypress) {
+        // console.log(keypress.keyCode)
+        if (keypress.keyCode === 13) {
+            var search = '/' + keypress.target.value
+            window.location.hash = 'search' + search
+        }
     },
 
     _imageHover: function() {
@@ -166,29 +176,12 @@ var DetailView = Backbone.Model.extend({
         console.log('click event')
     },
 
-    _runSearch: function(keypress) {
-        // console.log(keypress.keyCode)
-        if (keypress.keyCode === 13) {
-            var search = '/' + keypress.target.value
-            window.location.hash = 'search' + search
-        }
+    _goHome: function(click){
+        console.log(click.target)
     }
+        // Backbone.events.on('click', _goHome)
 
 })
-
-// var searchView = Backbone.Model.extend({
-//     el: '.bod',
-
-//     initialize: function(aModel) {
-//         this.model = aModel
-//         var boundRender = this._render.bind(this)
-//         this.model.on('sync', boundRender)
-//     },
-
-//     _render: function() {
-//            console.log('search')
-//     }
-// })
 
 var MultiView = Backbone.View.extend({
         el: '.bod',
@@ -207,33 +200,6 @@ var MultiView = Backbone.View.extend({
 
         },
 
-        events: {
-            // «evtType»  «domEL-selector» :  »
-            'keypress #searchBar': '_runSearch',
-            'click .item': '_openItem',
-            'mouseover img': '_imageHover'
-        },
-
-        _runSearch: function(keypress) {
-            if (keypress.keyCode === 13) {
-                var search = '/' + keypress.target.value
-                window.location.hash = 'search' + search
-            }
-        },
-
-        _openItem: function(click) {
-            click.preventDefault()
-            var itemNumber = click.currentTarget
-            var itemID = itemNumber.attributes.itemnumber.value
-            console.log(itemNumber)
-            var deets = '/' + itemID
-            window.location.hash = 'details' + deets
-        },
-
-        _imageHover: function() {
-            console.log('place onHoverImage')
-        },
-
         _render: function() {
             var listOfResults = this.model.attributes.results
 
@@ -250,26 +216,74 @@ var MultiView = Backbone.View.extend({
 
                 itemPrice = listOfResults[i].price
 
-                imageURL = listOfResults[i].Images[0].url_75x75
+                imageURL = listOfResults[i].Images[0].url_fullxfull
 
                 onHoverImage = listOfResults[i].Images[i]
 
 
                 var searchHed = ''
-                console.log(listOfResults[i])
                     // if(typeof this.searchQuery === 'string') {searchHed += "<h3>Results from: " + this.searchQuery + "</h3>"}
                 var stringBod =
-                    stringBod += '<div class="item" indexNumber="' + [i] + '" itemNumber="' + itemNumber + '"><img src="' + imageURL + '"><h3 class="title">' + itemTitle + '</h3><p class="itemPrice">' + itemPrice + '</p></div>'
-
+                    stringBod += '<div.itemContainer>'
+                    stringBod += '<div class="item" indexNumber="' + [i] + '" itemNumber="' + itemNumber + '">'
+                    stringBod +=    '<img class="multiImg" src="' + imageURL + '">'
+                    stringBod +=    '<h3 class="title">' + itemTitle + '</h3>'
+                    stringBod +=    '<p class="itemPrice">' + itemPrice + '</p>'
+                    stringBod += '</div></div>'
                 this.el.innerHTML = searchStringHed + stringBod
-
 
             }
 
-        }
+        },
+
+        events: {
+            // «evtType»  «domEL-selector» :  »
+            'keypress #searchBar': '_runSearch',
+            'click .item': '_runDetailView',
+            'mouseover img': '_imageHover'
+        },
+
+        _runSearch: function(keypress) {
+            if (keypress.keyCode === 13) {
+                var search = '/' + keypress.target.value
+                window.location.hash = 'search' + search
+            }
+        },
+
+        _runDetailView: function(click) {
+            click.preventDefault()
+            var itemNumber = click.currentTarget
+            var itemID = itemNumber.attributes.itemnumber.value
+            console.log(itemNumber)
+            var deets = '/' + itemID
+            window.location.hash = 'details' + deets
+        },
+
+        _imageHover: function() {
+            console.log('place onHoverImage')
+        },
 
     })
     ////////////////////////////////////////////////////
 
 
 var ironEtsy = new ironEtsyRouter()
+
+// multiple events trigger same function
+// function app(){
+//     function waterHazard(){
+//     alert('kerplunk!')
+//     }
+    
+//     function teeOff(){
+//     alert('fore!')
+//     Backbone.Events.trigger('miss')
+//     }
+
+    
+//     Backbone.Events.on('miss',waterHazard)
+// back
+    
+//     teeOff()
+// }
+

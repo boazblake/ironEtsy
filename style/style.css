@@ -62,7 +62,7 @@ html {
 }
 
 .bod * {
-    border: 1px solid slategrey;
+    /* border: 1px solid slategrey; */
     /* background: -webkit-linear-gradient(top, #39474E 100%,#708090 100%); */
 }
 
@@ -111,11 +111,14 @@ html {
 }
 
 
-.mainPic{
+.mainPic {
     display: block;
-    width: 60%;
+    width: 50%;
     margin: -31px auto;
+    padding-top: 5%;
 }
+
+
 
 .sidePicCont {
     display: block;
@@ -142,8 +145,6 @@ html {
 .otherStuff{
     height: 400px;
 }
-
-
 
 
 .desc {

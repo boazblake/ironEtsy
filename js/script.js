@@ -10,6 +10,7 @@ var ironEtsyRouter = Backbone.Router.extend({
 
     routes: {
         'details/:shopID/:id': 'handle_Detail_Data',
+        // 'details/:shopID/:id': 'handle_Shop_Data',
         'search/:keywords': 'handle_Search_Data',
         '*home': 'handle_Home_Page'
     },
@@ -20,7 +21,13 @@ var ironEtsyRouter = Backbone.Router.extend({
         var etsy_Detail_View = new DetailView(etsy_Detail_Model)
         etsy_Detail_Model.fetch()
     },
+    
 
+    handle_Shop_Data: function() {
+        var etsy_Shop_Model = new ShopModel()
+        var etsy_Shop_View = new ShopView(etsy_Shop_Model)
+        etsy_Shop_Model.fetch()
+    },
 
     handle_Search_Data: function(keywords) {
         console.log(keywords)
@@ -32,7 +39,6 @@ var ironEtsyRouter = Backbone.Router.extend({
 
         Search_Model.fetch()
     },
-
 
     handle_Home_Page: function() {
         var etsy_Default_Collection = new MultiCollection()
@@ -62,18 +68,15 @@ var DetailModel = Backbone.Model.extend({
         return this._buildURL(listing_id)
     },
 
-    _buildURL: function(listing_id) {
+    _buildURL: function(shop_id) {
         var hashBar = window.location.hash.substr(1)
         var hashBarArray = hashBar.split('/')
         var hashString = ''
         var listing_id = hashBarArray[2]
-        var shop_id = hashBarArray[1]
         console.log(listing_id)
-        console.log(shop_id)
 
         if (listing_id) { hashString = +listing_id }
         console.log(hashString)
-
         var URL = 'https://openapi.etsy.com/v2/listings/' + listing_id + '.js?&includes=Images,Shop&callback=?&api_key=' + this.api_key
 
         return URL
@@ -85,9 +88,39 @@ var DetailModel = Backbone.Model.extend({
         } else return JSONdata
     },
 
-
     api_key: etsyKey
 })
+
+
+var ShopModel = Backbone.Model.extend({
+
+    url:function(shop_id) {
+        this.url = this._build_ShopURL
+        return this.url(shop_id)
+    },
+
+    shopURL: function(shop_id) {
+        this.shopURL = this._build_ShopURL
+        return this._build_ShopURL(shop_id)
+    },
+
+    _build_ShopURL: function(shop_id){
+        var hashBar = window.location.hash.substr(1)
+        var hashBarArray = hashBar.split('/')
+        var hashString = ''
+        var shop_id = hashBarArray[1]
+        console.log(shop_id)
+        var URLshop = 'https://openapi.etsy.com/v2/shops/' + shop_id + '/listings/active.js?&includes=Images,Shop&?callback=?&api_key=' + this.api_key
+        console.log(URLshop)
+        
+        return URLshop
+    },
+
+
+    api_key:etsyKey
+
+})
+
 
 var MultiCollection = Backbone.Collection.extend({
 
@@ -129,9 +162,10 @@ var DetailView = Backbone.View.extend({
         this.model = aModel
         var boundRender = this._render.bind(this)
         this.model.on('sync', boundRender)
+        
     },
 
-    _render: function(data, indexNumber) {
+    _render: function() {
 
         // console.log(this.el)
         var title = this.model.get('title')
@@ -139,11 +173,15 @@ var DetailView = Backbone.View.extend({
         var desc = this.model.get('description')
         var price = this.model.get('price')
         var imageArray = this.model.get('Images')
-        var image = []
-            console.log(this.model)
+        var imageSide = ''
+        var image
 
         for (var i = 0; i < imageArray.length; i++) {
-            image[i] = imageArray[i].url_fullxfull
+            image = imageArray[i].url_fullxfull
+            console.log(image)
+            imageSide += '<img class="sidePic" src="' + image+ '">'
+            console.log(imageSide)
+
         }
 
 
@@ -159,11 +197,12 @@ var DetailView = Backbone.View.extend({
         searchStringHed += '</div>'
 
         stringBod_image = '<div class="itemBox">'
-        stringBod_image +=      '<img class="mainPic" src="' + image[0] + '">'
+        stringBod_image +=      '<img class="mainPic" src="' + image + '">'
         stringBod_image +='<div class="sidePicCont">'
-        stringBod_image +=      '<img class="sidePic"src="' + image[1] + '">'
-        stringBod_image +=      '<img class="sidePic"src="' + image[2] + '">'
-        stringBod_image +=      '<img class="sidePic"src="' + image[3] + '">'
+        stringBod_image += imageSide
+        // stringBod_image +=      '<img class="sidePic"src="' + image[1] + '">'
+        // stringBod_image +=      '<img class="sidePic"src="' + image[2] + '">'
+        // stringBod_image +=      '<img class="sidePic"src="' + image[3] + '">'
         stringBod_image +='</div>'
         stringBod_Data += '</div>'
 
@@ -180,8 +219,6 @@ var DetailView = Backbone.View.extend({
             // console.log(this.el.innerHTML)
 
     },
-
-
 
     events: {
         // «evtType»  «domEL-selector» :  »
@@ -210,6 +247,21 @@ var DetailView = Backbone.View.extend({
             console.log(click.target)
         }
         // Backbone.events.on('click', _goHome)
+})
+
+var ShopView = Backbone.View.extend({
+    el: '.otherStuff',
+
+    initialize: function(aModel) {
+        this.model = aModel
+        console.log(this.model)
+        var boundRender = this._render.bind(this)
+        this.model.on('sync', boundRender)
+    },
+
+    _render:function() {
+        console.log(this.el)
+    }
 })
 
 var MultiView = Backbone.View.extend({
@@ -304,6 +356,9 @@ var MultiView = Backbone.View.extend({
 
 
 var ironEtsy = new ironEtsyRouter()
+
+// add anchor tags to nav bar with words
+
 
 // multiple events trigger same function
 // function app(){

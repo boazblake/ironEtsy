@@ -62,7 +62,7 @@ html {
 }
 
 .bod * {
-    border: 1px solid slategrey;
+    /* border: 1px solid slategrey; */
     /* background: -webkit-linear-gradient(top, #39474E 100%,#708090 100%); */
 }
 

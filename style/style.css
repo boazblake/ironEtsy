@@ -32,7 +32,7 @@ html {
     background: transparent;
     outline: none;
     border: 1px solid #39474E;
-    font-family: Yellowtail;
+    font-family: 'Open Sans Condensed', sans-serif;
 }
 
 #searchBar:hover {

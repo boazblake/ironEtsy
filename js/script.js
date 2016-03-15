@@ -9,7 +9,7 @@ var searchBar = document.querySelector('#searchBar')
 var ironEtsyRouter = Backbone.Router.extend({
 
     routes: {
-        'details/:id': 'handle_Detail_Data',
+        'details/:shopID/:id': 'handle_Detail_Data',
         'search/:keywords': 'handle_Search_Data',
         '*home': 'handle_Home_Page'
     },
@@ -37,7 +37,7 @@ var ironEtsyRouter = Backbone.Router.extend({
     handle_Home_Page: function() {
         var etsy_Default_Collection = new MultiCollection()
         var etsy_Default_View = new MultiView(etsy_Default_Collection)
-        etsy_Default_Collection.fetch().then(function(arg){
+        etsy_Default_Collection.fetch().then(function(arg) {
             // console.log(arg)
         })
     },
@@ -55,30 +55,34 @@ var ironEtsyRouter = Backbone.Router.extend({
 // Model
 
 var DetailModel = Backbone.Model.extend({
-    url: function(queryStr) {
+    url: function(listing_id) {
 
         this.url = this._buildURL
 
-        return this._buildURL(queryStr)
+        return this._buildURL(listing_id)
     },
 
-    _buildURL: function(queryStr) {
-        var u = window.location.hash.substr(1)
-        var ur = u.split('/')
-        var qStr = ''
-        var queryStr = ur[1]
+    _buildURL: function(listing_id) {
+        var hashBar = window.location.hash.substr(1)
+        var hashBarArray = hashBar.split('/')
+        var hashString = ''
+        var listing_id = hashBarArray[2]
+        var shop_id = hashBarArray[1]
+        console.log(listing_id)
+        console.log(shop_id)
 
-        if (queryStr) { qStr = +queryStr }
-        var u = 'https://openapi.etsy.com/v2/listings/' + queryStr + '.js?&includes=Images&callback=?&api_key=' + this.api_key
-        
-        return u
+        if (listing_id) { hashString = +listing_id }
+        console.log(hashString)
+
+        var URL = 'https://openapi.etsy.com/v2/listings/' + listing_id + '.js?&includes=Images&callback=?&api_key=' + this.api_key
+
+        return URL
     },
 
-    parse: function(JSONdata){
+    parse: function(JSONdata) {
         if (JSONdata.results !== undefined && JSONdata.results.length === 1) {
             return JSONdata.results[0]
-        }
-        else return JSONdata
+        } else return JSONdata
     },
 
 
@@ -87,9 +91,9 @@ var DetailModel = Backbone.Model.extend({
 
 var MultiCollection = Backbone.Collection.extend({
 
-    model:DetailModel,
+    model: DetailModel,
 
-    parse: function(JSONdata){
+    parse: function(JSONdata) {
         return JSONdata.results
     },
 
@@ -134,11 +138,11 @@ var DetailView = Backbone.View.extend({
 
         var desc = this.model.get('description')
         var price = this.model.get('price')
-        var imageArray  = this.model.get('Images')
-        var image_zero = this.model.get('Images')[0]
+        var imageArray = this.model.get('Images')
         var image = []
+            console.log(this.model)
 
-        for (var i = 0; i <imageArray.length; i++){
+        for (var i = 0; i < imageArray.length; i++) {
             image[i] = imageArray[i].url_fullxfull
         }
 
@@ -149,33 +153,33 @@ var DetailView = Backbone.View.extend({
 
 
 
-        searchStringHed  = '<div class="hed">'
-		searchStringHed += 		'<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
-        searchStringHed +=       '<a href="#home"><button class="homeButton">HOME</a>'
-		searchStringHed += '</div>'
+        searchStringHed = '<div class="hed">'
+        searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
+        searchStringHed += '<a href="#home"><i class="fa fa-home"></i></a>'
+        searchStringHed += '</div>'
 
-		stringBod_image     = '<div class="itemBox">'
-        stringBod_image    +=     '<img class="mainPic" src="' + image[0] +'">'
-        stringBod_image    +=         '<div class="sidePicCont">'
-        stringBod_image    +=             '<img class="sidePic"src="' + image[1] +'">'
-        stringBod_image    +=             '<img class="sidePic"src="' + image[2] +'">'
-		stringBod_image    += 	        '<img class="sidePic"src="' + image[3] +'">'
-        stringBod_image    +=         '</div>'
-       
-
+        stringBod_image = '<div class="itemBox">'
+        stringBod_image += '<img class="mainPic" src="' + image[0] + '">'
+        stringBod_image += '<div class="sidePicCont">'
+        stringBod_image += '<img class="sidePic"src="' + image[1] + '">'
+        stringBod_image += '<img class="sidePic"src="' + image[2] + '">'
+        stringBod_image += '<img class="sidePic"src="' + image[3] + '">'
+        stringBod_image += '</div>'
 
 
-        stringBod_Data     +=     '</div>'
-        stringBod_Data     +=     '<div class="data">'
-		stringBod_Data 	   += 	   '<h3 class="title">' + title + '</h3>'
-		stringBod_Data 	   += 	   '<p class="price"$>' + price + '</p>'
-        stringBod_Data     +=      '</div>'
-        stringBod_Data     +=      '<p class="desc">' + desc + '</p>'
-		stringBod_Data 	   += '</div>'
 
-        this.el.innerHTML = searchStringHed + stringBod_image +stringBod_Data
-        // console.log(this.el.innerHTML)
-        
+
+        stringBod_Data += '</div>'
+        stringBod_Data += '<div class="data">'
+        stringBod_Data += '<h3 class="title">' + title + '</h3>'
+        stringBod_Data += '<p class="price"$>' + price + '</p>'
+        stringBod_Data += '</div>'
+        stringBod_Data += '<p class="desc">' + desc + '</p>'
+        stringBod_Data += '</div>'
+
+        this.el.innerHTML = searchStringHed + stringBod_image + stringBod_Data
+            // console.log(this.el.innerHTML)
+
     },
 
 
@@ -203,9 +207,9 @@ var DetailView = Backbone.View.extend({
         console.log('click event')
     },
 
-    _goHome: function(click){
-        console.log(click.target)
-    }
+    _goHome: function(click) {
+            console.log(click.target)
+        }
         // Backbone.events.on('click', _goHome)
 })
 
@@ -225,20 +229,19 @@ var MultiView = Backbone.View.extend({
 
             var listOfResults = this.collection.models
             searchStringHed = '<div class="hed">'
-            searchStringHed +=      '<input id="searchBar" type="textarea" placeholder="search Iron Etsy...">'
-            searchStringHed +=      '<a href="#home"><button class="homeButton">HOME</a>'
+            searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
             searchStringHed += '</div>'
 
-            if(typeof this.searchQuery === 'string') {searchStringHed += "<h3>You Searched For: " + this.searchQuery + "</h3>"}
+            if (typeof this.searchQuery === 'string') { searchStringHed += "<h3>You Searched For: " + this.searchQuery + "</h3>" }
 
 
-            
+
 
             var stringBod = '<div class="itemContainer">'
-            
-                var searchHed = ''
-               
-               
+
+            var searchHed = ''
+
+
 
             listOfTitles = ''
             for (var i = 0; i < listOfResults.length; i++) {
@@ -248,19 +251,21 @@ var MultiView = Backbone.View.extend({
 
                 var itemNumber = etsyProductModel.get('listing_id')
 
+                var shopID = etsyProductModel.attributes.Shop.shop_id
+                
                 var itemPrice = etsyProductModel.get('price')
 
                 var imageURL = listOfResults[i].get('Images')[0].url_fullxfull
 
-                    stringBod += '<div class="itemCollections" indexNumber="' + [i] + '">'
-                    stringBod +=    '<img class="multiImg" src="' + imageURL + '" itemNumber="' + itemNumber + '">'
-                    stringBod +=    '<h5 class="title">' + itemTitle + '</h5>'
-                    stringBod +=    '<p class="itemPrice"> $' + itemPrice + '</p>'
-                    stringBod +=    '</div>'
+                stringBod += '<div class="itemCollections" indexNumber="' + [i] + '">'
+                stringBod += '<img class="multiImg" src="' + imageURL + '" itemNumber="' + itemNumber + '"  shopID="' + shopID + '">'
+                stringBod += '<h5 class="title">' + itemTitle + '</h5>'
+                stringBod += '<p class="itemPrice"> $' + itemPrice + '</p>'
+                stringBod += '</div>'
             }
-             stringBod += '</div>'
+            stringBod += '</div>'
 
-                this.el.innerHTML = searchStringHed + searchHed +stringBod
+            this.el.innerHTML = searchStringHed + searchHed + stringBod
 
 
         },
@@ -285,8 +290,9 @@ var MultiView = Backbone.View.extend({
             click.preventDefault()
             var itemNumber = click.currentTarget
             var itemID = itemNumber.attributes.itemnumber.value
-            console.log(itemNumber)
-            var deets = '/' + itemID
+            var shopID = itemNumber.attributes.shopid.value
+            console.log(shopID)
+            var deets = '/' + shopID + '/' + itemID
             window.location.hash = 'details' + deets
         },
 
@@ -305,16 +311,15 @@ var ironEtsy = new ironEtsyRouter()
 //     function waterHazard(){
 //     alert('kerplunk!')
 //     }
-    
+
 //     function teeOff(){
 //     alert('fore!')
 //     Backbone.Events.trigger('miss')
 //     }
 
-    
+
 //     Backbone.Events.on('miss',waterHazard)
 // back
-    
+
 //     teeOff()
 // }
-

@@ -74,7 +74,7 @@ var DetailModel = Backbone.Model.extend({
         if (listing_id) { hashString = +listing_id }
         console.log(hashString)
 
-        var URL = 'https://openapi.etsy.com/v2/listings/' + listing_id + '.js?&includes=Images&callback=?&api_key=' + this.api_key
+        var URL = 'https://openapi.etsy.com/v2/listings/' + listing_id + '.js?&includes=Images,Shop&callback=?&api_key=' + this.api_key
 
         return URL
     },
@@ -154,28 +154,27 @@ var DetailView = Backbone.View.extend({
 
 
         searchStringHed = '<div class="hed">'
-        searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
-        searchStringHed += '<a href="#home"><i class="fa fa-home"></i></a>'
+        searchStringHed +=      '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
+        searchStringHed +=      '<a href="#home"><i class="fa fa-home"></i></a>'
         searchStringHed += '</div>'
 
         stringBod_image = '<div class="itemBox">'
-        stringBod_image += '<img class="mainPic" src="' + image[0] + '">'
-        stringBod_image += '<div class="sidePicCont">'
-        stringBod_image += '<img class="sidePic"src="' + image[1] + '">'
-        stringBod_image += '<img class="sidePic"src="' + image[2] + '">'
-        stringBod_image += '<img class="sidePic"src="' + image[3] + '">'
-        stringBod_image += '</div>'
-
-
-
-
+        stringBod_image +=      '<img class="mainPic" src="' + image[0] + '">'
+        stringBod_image +='<div class="sidePicCont">'
+        stringBod_image +=      '<img class="sidePic"src="' + image[1] + '">'
+        stringBod_image +=      '<img class="sidePic"src="' + image[2] + '">'
+        stringBod_image +=      '<img class="sidePic"src="' + image[3] + '">'
+        stringBod_image +='</div>'
         stringBod_Data += '</div>'
+
+
         stringBod_Data += '<div class="data">'
-        stringBod_Data += '<h3 class="title">' + title + '</h3>'
-        stringBod_Data += '<p class="price"$>' + price + '</p>'
+        stringBod_Data +=       '<h3 class="title">' + title + '</h3>'
+        stringBod_Data +=       '<p class="price"$>' + price + '</p>'
+        stringBod_Data += '<div class="otherStuff"></div>'
         stringBod_Data += '</div>'
+
         stringBod_Data += '<p class="desc">' + desc + '</p>'
-        stringBod_Data += '</div>'
 
         this.el.innerHTML = searchStringHed + stringBod_image + stringBod_Data
             // console.log(this.el.innerHTML)

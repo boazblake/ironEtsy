@@ -265,7 +265,6 @@ var ShopView = Backbone.View.extend({
 
     _render: function() {
 
-
         var listingSearch = window.location.hash.substr(1)
         var listingNumber = listingSearch.split('/')
         var selectedItem = listingNumber[2]
@@ -275,7 +274,7 @@ var ShopView = Backbone.View.extend({
         otherStuff_HedString += 'stuff by this guy...'
         otherStuff_HedString += '</div>'
 
-
+        
 
         var shopDataArray = this.collection.models
 
@@ -293,11 +292,6 @@ var ShopView = Backbone.View.extend({
             var chosenOne
             var otherStuff
 
-    // console.log(imageObjID)
-
-                // console.log(  imageObjID.toString() === selectedItem.toString() )
-                
-
             if (imageObjID.toString() === selectedItem.toString()) {
                 
                 console.log(imageURL)
@@ -313,13 +307,31 @@ var ShopView = Backbone.View.extend({
                     }
         
         }
-
-
-
         // console.log(otherStuff_HedString)
         this.el.innerHTML = '<div class="hed">'+otherStuff_HedString + '</div><div class="chosen">'+ chosenOne + '</div><div class="others">' + otherStuff + '</div>'
-    }
+    },
+
+     _changeHash:function(event) {
+            var newPick = event.target.attributes.listingID.value
+            var oldHash = window.location.hash.substr(1)
+            var oldHashArray = oldHash.split('/')
+            var newHash = oldHashArray[0]+'/'+oldHashArray[1]+'/'+newPick
+            window.location.hash = newHash
+            console.log(newHash)
+
+
+            console.log(event.target.attributes.listingID.value)
+    },
+
+        events:{
+            'click .itemList':'_changeHash'
+        }
+
 })
+
+
+
+
 
 var MultiView = Backbone.View.extend({
         el: '.bod',
@@ -436,7 +448,7 @@ var ironEtsy = new ironEtsyRouter()
 
 
 //     Backbone.Events.on('click .img',waterHazard)
-// back
+//
 
 //     teeOff()
 // }

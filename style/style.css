@@ -16,6 +16,19 @@ html {
     vertical-align: top;
 }
 
+img.loadingGif {
+    /* display: inline-block; */
+    position: absolute;
+    top: 200px;
+    left: 200px;
+    border: 2px solid #888888;
+    background-image: -webkit-radial-gradient(rgba(44, 50, 56, 1), rgba(44, 50, 56, 0.2));
+    background-clip: text;
+    /* box-shadow: 5px 5px 5px rgba(44, 50, 56, 0.5); */
+    padding: 1%;
+}
+
+
 #container {
     height: 90vh;
 }
@@ -44,12 +57,11 @@ html {
     transition: all ease 1s;
 }
 
-.navBar{
+.navBar {
     position: absolute;
     width: 80%;
     top: 30px;
-    left:10%;
-
+    left: 10%;
 }
 
 li,
@@ -75,21 +87,19 @@ li:hover {
     display: inline-block;
     font-size: 2em;
     outline: none;
-    background-clip:padding-box;
+    background-clip: padding-box;
     text-shadow: rgba(255, 255, 255, 0.8) 0px 0px 1px;
     color: transparent;
     background: transparent;
 }
 
-
-
-.fa-home:hover{
+.fa-home:hover {
     display: inline-block;
     font-size: 2em;
     outline: none;
-    background-clip:padding-box;
+    background-clip: padding-box;
     text-shadow: rgba(255, 255, 255, 0.8) 0px 0px 1px;
-    color: whit;
+    color: white;
     background: transparent;
 }
 
@@ -103,17 +113,27 @@ li:hover {
     /* background: -webkit-linear-gradient(top, #39474E 100%,#708090 100%); */
 }
 
-
-.bod{
+.bod {
     position: relative;
 }
-
-
 
 .mainBod {
     background: -webkit-linear-gradient(right, #39474E 10%, #708090 100%);
     color: whitesmoke;
 }
+
+.itemContainer{
+    height: 700px;
+    overflow:scroll;
+}
+
+.itemContainer::-webkit-scrollbar {
+    width: 0;
+}
+
+
+
+
 
 .itemCollections {
     display: inline-block;
@@ -130,6 +150,8 @@ li:hover {
     transition: all ease .5s;
     box-shadow: 1px 1px 5px #39474E;
 }
+
+
 
 .item {
     margin: 0 auto;
@@ -188,14 +210,14 @@ li:hover {
     height: 200px;
     display: block;
     margin: ;
-    padding:2%;
+    padding: 2%;
     overflow: scroll;
     background-color: rgba(44, 50, 56, 0.5);
     box-shadow: 5px 5px 5px 5px #39474E;
 }
 
 .desc::-webkit-scrollbar {
-    width: 0
+    width: 0;
 }
 
 .multiImg {
@@ -207,13 +229,35 @@ li:hover {
     width: 80%;
 }
 
-
+.chosen {
+    display: inline-block;
+    width: 60%;
+}
 
 .itemPicked {
-    width:60%;
+    width:500px;
+
+}
+
+.deets {
+    width: 30%;
+    display: inline-block;
+}
+
+.otherstuff{
+    height: 150px;
+    overflow:scroll;
+}
+
+.otherstuff::-webkit-scrollbar {
+    width: 0;
 }
 
 
 .itemList {
-    width:200px;
+    width: 200px;
+}
+
+.arrowBox{
+    font-size: 40px;
 }

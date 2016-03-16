@@ -9,19 +9,17 @@ var searchBar = document.querySelector('#searchBar')
 var ironEtsyRouter = Backbone.Router.extend({
 
     routes: {
-        // 'details/:shopID/:id': 'handle_Detail_Data',
-        'details/:shopID/:id': 'handle_Shop_Data',
+        'details/:id/:shopID': 'handle_Shop_Data',
+        // 'details/:shopID/:id/:id': 'handle_Shop_Data',
         'search/:keywords': 'handle_Search_Data',
         '*home': 'handle_Home_Page'
     },
 
-
     handle_Detail_Data: function() {
         var etsy_Detail_Model = new DetailModel()
         var etsy_Detail_View = new DetailView(etsy_Detail_Model)
-        etsy_Detail_Model.fetch() //.then(handle_Shop_Data)
+        etsy_Detail_Model.fetch()//.then(function(){console.log(data)})
     },
-
 
     handle_Shop_Data: function() {
         var etsy_Shop_Collection = new ShopCollection()
@@ -43,12 +41,8 @@ var ironEtsyRouter = Backbone.Router.extend({
     handle_Home_Page: function() {
         var etsy_Default_Collection = new MultiCollection()
         var etsy_Default_View = new MultiView(etsy_Default_Collection)
-        etsy_Default_Collection.fetch().then(function(arg) {
-            // console.log(arg)
-        })
+        etsy_Default_Collection.fetch()
     },
-
-
 
     initialize: function() {
         Backbone.history.start()
@@ -92,9 +86,9 @@ var ShopCollection = Backbone.Collection.extend({
 
     parse: function(JSONdata) {
         // console.log(JSONdata.results)
-            // if (JSONdata.results !== undefined && JSONdata.results.length === 1) {
-            //     return JSONdata.results
-            // } else 
+        // if (JSONdata.results !== undefined && JSONdata.results.length === 1) {
+        //     return JSONdata.results
+        // } else 
         return JSONdata.results
     },
 
@@ -109,7 +103,7 @@ var ShopCollection = Backbone.Collection.extend({
         var hashBarArray = hashBar.split('/')
         var hashString = ''
         var shop_id = hashBarArray[1]
-        // console.log(shop_id)
+            // console.log(shop_id)
             // https://openapi.etsy.com/v2/shops/:shop_id/listings/active.js?api_key=aavnvygu0h5r52qes74x9zvo&callback=?.
         hashString = 'https://openapi.etsy.com/v2/shops/' + shop_id + '/listings/active.js?api_key=' + this.api_key + '&includes=Images&callback=?'
         return hashString
@@ -156,6 +150,7 @@ var DetailView = Backbone.View.extend({
     el: '.bod',
 
     initialize: function(aModel) {
+        this.el.innerHTML = '<img class="loadingGif" src="http://i.imgur.com/X6kTu.gif">'
 
         this.model = aModel
         var boundRender = this._render.bind(this)
@@ -175,9 +170,9 @@ var DetailView = Backbone.View.extend({
 
         for (var i = 0; i < imageArray.length; i++) {
             image = imageArray[i].url_fullxfull
-                // console.log(image)
+                console.log(image)
             imageSide += '<img class="sidePic ' + [i] + '" src="' + image + '">'
-                // console.log(imageSide)
+                console.log(imageSide)
 
         }
 
@@ -221,7 +216,7 @@ var DetailView = Backbone.View.extend({
         stringBod_Data += '<p class="desc">' + desc + '</p>'
 
         this.el.innerHTML = searchStringHed + stringBod_image + stringBod_Data
-            // console.log(this.el.innerHTML)
+            console.log(this.el.innerHTML)
 
     },
 
@@ -248,9 +243,9 @@ var DetailView = Backbone.View.extend({
         console.log('click event')
     },
 
-    _goHome: function(click) {
-            console.log(click.target)
-        }
+    // _goHome: function(click) {
+    //         console.log(click.target)
+    //     }
         // Backbone.events.on('click', _goHome)
 })
 
@@ -258,6 +253,7 @@ var ShopView = Backbone.View.extend({
     el: '.bod',
 
     initialize: function(collection) {
+        this.el.innerHTML = '<img class="loadingGif" src="http://i.imgur.com/X6kTu.gif">'
         this.collection = collection
         var boundRender = this._render.bind(this)
         this.collection.on('sync', boundRender)
@@ -265,16 +261,18 @@ var ShopView = Backbone.View.extend({
 
     _render: function() {
 
+
+
         var listingSearch = window.location.hash.substr(1)
         var listingNumber = listingSearch.split('/')
         var selectedItem = listingNumber[2]
         console.log(selectedItem)
 
         var otherStuff_HedString = '<div class="hed">'
-        otherStuff_HedString += 'stuff by this guy...'
+        otherStuff_HedString += 'other stuff by this guy...'
         otherStuff_HedString += '</div>'
 
-        
+
 
         var shopDataArray = this.collection.models
 
@@ -284,60 +282,87 @@ var ShopView = Backbone.View.extend({
             var listingID = etsyUserModels.get('listing_id')
 
             imgObj_Array = etsyUserModels.get('Images')
-            // console.log(imgObj_Array)
+                // console.log(imgObj_Array)
 
             var imageObj = imgObj_Array[0]
             var imageObjID = imgObj_Array[0].listing_id
             var imageURL = imgObj_Array[0].url_fullxfull
+            var title = etsyUserModels.get('title')
+            var price = etsyUserModels.get('price')
+            var description = etsyUserModels.get('description')
             var chosenOne
             var otherStuff
 
             if (imageObjID.toString() === selectedItem.toString()) {
-                
-                console.log(imageURL)
 
-             chosenOne += '<img src="' + imageURL + '"class="itemPicked" listingID="' + listingID + '">'   
-        
+                console.log(price)
+
+                chosenOne += '<img src="' + imageURL + '"class="itemPicked" listingID="' + listingID + '">'
+
+            } else {
+
+                otherStuff += '<img src="' + imageURL + '"class="itemList" listingID="' + listingID + '">'
+
             }
 
-             else {
-            
-                    otherStuff += '<img src="' + imageURL + '"class="itemList" listingID="' + listingID + '">'
-        
-                    }
-        
         }
         // console.log(otherStuff_HedString)
-        this.el.innerHTML = '<div class="hed">'+otherStuff_HedString + '</div><div class="chosen">'+ chosenOne + '</div><div class="others">' + otherStuff + '</div>'
+        
+        searchStringHed = '<div class="hed">'
+        searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
+        searchStringHed += '</div>'
+        searchStringHed += '<a href="#home"><i class="fa fa-home"></i></a>'
+        searchStringHed += '<ul class="navBar">'
+        searchStringHed += '<a href="#search/Clothing"><li>Clothing</li></a>'
+        searchStringHed += '<a href="#search/Jewelry"><li>Jewelry</li></a>'
+        searchStringHed += '<a href="#search/Craft"><li>Craft</li></a>'
+        searchStringHed += '<a href="#search/Weddings"><li>Weddings</li></a>'
+        searchStringHed += '<a href="#search/Entertainment"><li>Entertainment</li></a>'
+        searchStringHed += '<a href="#search/Home"><li>Home</li></a>'
+        searchStringHed += '<a href="#search/Vintage"><li>Vintage</li></a>'
+        searchStringHed += '</ul>'
+        var hed = '<div class="mainCon"><a href="#home"><i class="fa fa-home"></i></a><div class="hed">' + otherStuff_HedString + '</div>'
+        var mainPicCon = '<div class="chosen">' + chosenOne + '</div>'
+        mainPicCon += '<div class="deets"><div class="title">' + title + '</div>'
+        mainPicCon += '<div class="deets"><div class="desc">' + description + '</div>'
+        mainPicCon += '<div class="price">$' + price + '</div></div></div>'
+        // var otherStuff = '<div class="others">' + otherStuff + '</div><div class="otherStuffDeets"><p>title</p><p>price</p></div>'
+        var arrowBox = '<div class="arrowBox"><i class="fa fa-arrow-left"></i>     <i class="fa fa-arrow-right"></i></div>'
+        
+        function _nextOne(MouseClickEvent){
+            console.log(MouseClickEvent)
+        }
+        Backbone.Events.trigger('click .fa-arrow-left', _nextOne)
+
+        this.el.innerHTML = searchStringHed + mainPicCon +  arrowBox+ '<div class="otherstuff">'+otherStuff +'</div>'
+
+
+
     },
 
-     _changeHash:function(event) {
-            var newPick = event.target.attributes.listingID.value
-            var oldHash = window.location.hash.substr(1)
-            var oldHashArray = oldHash.split('/')
-            var newHash = oldHashArray[0]+'/'+oldHashArray[1]+'/'+newPick
-            window.location.hash = newHash
-            console.log(newHash)
 
-
+    _changeHash: function(event) {
+        var newPick = event.target.attributes.listingID.value
+        var oldHash = window.location.hash.substr(1)
+        var oldHashArray = oldHash.split('/')
+        var newHash = oldHashArray[0] + '/' + oldHashArray[1] + '/' + newPick
+        window.location.hash = newHash
+        console.log(newHash),
             console.log(event.target.attributes.listingID.value)
     },
 
-        events:{
-            'click .itemList':'_changeHash'
-        }
-
+    events: {
+        'click .itemList': '_changeHash',
+        'click .fa-arrow-left': '_nextOne',
+    }
 })
-
-
-
-
 
 var MultiView = Backbone.View.extend({
         el: '.bod',
         searchQuery: null,
 
         initialize: function(collection, keywords) {
+            this.el.innerHTML = '<img class="loadingGif" src="http://i.imgur.com/X6kTu.gif">'
             this.searchQuery = keywords
             this.collection = collection
             var boundRender = this._render.bind(this)
@@ -401,7 +426,7 @@ var MultiView = Backbone.View.extend({
         events: {
             // «evtType»  «domEL-selector» :  »
             'keypress #searchBar': '_runSearch',
-            'click img.multiImg': '_runDetailView',
+            'click img.multiImg': '_runDetailView',  //
             'mouseover img': '_imageHover'
         },
 
@@ -421,18 +446,22 @@ var MultiView = Backbone.View.extend({
             var shopID = itemNumber.attributes.shopid.value
             console.log(shopID)
             var deets = '/' + shopID + '/' + itemID
-            window.location.hash = 'details' + deets
+            window.location.hash = 'details' + deets 
         },
 
         _imageHover: function() {
             console.log('place onHoverImage')
         },
-
-    })
+})
     ////////////////////////////////////////////////////
 
 
 var ironEtsy = new ironEtsyRouter()
+
+// cool view on promise return
+// .then(function(arg) {
+//             console.log(arg)
+//         })
 
 // multiple events trigger same function...
 

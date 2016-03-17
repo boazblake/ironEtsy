@@ -268,11 +268,6 @@ var ShopView = Backbone.View.extend({
         var selectedItem = listingNumber[2]
         console.log(selectedItem)
 
-        var otherStuff_HedString = '<div class="hed">'
-        otherStuff_HedString += 'other stuff by this guy...'
-        otherStuff_HedString += '</div>'
-
-
 
         var shopDataArray = this.collection.models
 
@@ -306,28 +301,33 @@ var ShopView = Backbone.View.extend({
             }
 
         }
-        // console.log(otherStuff_HedString)
-        
-        searchStringHed = '<div class="hed">'
-        searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
-        searchStringHed += '</div>'
+        var mainPicCon = ''
+        var searchStringHed = ''
+        var arrowBox = ''
+        searchStringHed += '<div class="hed">'
+        searchStringHed +=      '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
         searchStringHed += '<a href="#home"><i class="fa fa-home"></i></a>'
         searchStringHed += '<ul class="navBar">'
-        searchStringHed += '<a href="#search/Clothing"><li>Clothing</li></a>'
-        searchStringHed += '<a href="#search/Jewelry"><li>Jewelry</li></a>'
-        searchStringHed += '<a href="#search/Craft"><li>Craft</li></a>'
-        searchStringHed += '<a href="#search/Weddings"><li>Weddings</li></a>'
-        searchStringHed += '<a href="#search/Entertainment"><li>Entertainment</li></a>'
-        searchStringHed += '<a href="#search/Home"><li>Home</li></a>'
-        searchStringHed += '<a href="#search/Vintage"><li>Vintage</li></a>'
+        searchStringHed +=      '<a href="#search/Clothing"><li>Clothing</li></a>'
+        searchStringHed +=      '<a href="#search/Jewelry"><li>Jewelry</li></a>'
+        searchStringHed +=      '<a href="#search/Craft"><li>Craft</li></a>'
+        searchStringHed +=      '<a href="#search/Weddings"><li>Weddings</li></a>'
+        searchStringHed +=      '<a href="#search/Entertainment"><li>Entertainment</li></a>'
+        searchStringHed +=      '<a href="#search/Home"><li>Home</li></a>'
+        searchStringHed +=      '<a href="#search/Vintage"><li>Vintage</li></a>'
         searchStringHed += '</ul>'
-        var hed = '<div class="mainCon"><a href="#home"><i class="fa fa-home"></i></a><div class="hed">' + otherStuff_HedString + '</div>'
-        var mainPicCon = '<div class="chosen">' + chosenOne + '</div>'
-        mainPicCon += '<div class="deets"><div class="title">' + title + '</div>'
-        mainPicCon += '<div class="deets"><div class="desc">' + description + '</div>'
-        mainPicCon += '<div class="price">$' + price + '</div></div></div>'
-        // var otherStuff = '<div class="others">' + otherStuff + '</div><div class="otherStuffDeets"><p>title</p><p>price</p></div>'
-        var arrowBox = '<div class="arrowBox"><i class="fa fa-arrow-left"></i>     <i class="fa fa-arrow-right"></i></div>'
+        searchStringHed += '</div>'
+
+
+        mainPicCon +=           '<div class="chosen">' + chosenOne + '</div>'
+        mainPicCon +=           '<div class="deets">'
+        mainPicCon +=               '<div class="title">' + title + '</div>'
+        mainPicCon +=               '<div class="desc">' + description + '</div>'
+        mainPicCon +=               '<div class="price">$' + price + '</div>'
+        mainPicCon +=           '</div>'
+
+        arrowBox +=         '<div class="arrowBox"><i class="fa fa-arrow-left"></i></div>'
+        arrowBox +=         '<div class="arrowBox"><i class="fa fa-arrow-right"></i></div>'
         
         function _nextOne(MouseClickEvent){
             console.log(MouseClickEvent)

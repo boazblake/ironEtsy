@@ -206,7 +206,7 @@ li:hover {
 }
 
 .desc {
-    width: 700px;
+    width: 100%;
     height: 200px;
     display: block;
     margin: ;
@@ -232,20 +232,25 @@ li:hover {
 .chosen {
     display: inline-block;
     width: 60%;
+    margin-top:20px ;
 }
 
 .itemPicked {
     width:500px;
+    margin-left:80px;
 
 }
 
 .deets {
+    vertical-align: top;
     width: 30%;
     display: inline-block;
+    height: 600px;
+    padding-top:20px ;
 }
 
 .otherstuff{
-    height: 150px;
+    height: 175px;
     overflow:scroll;
 }
 
@@ -260,4 +265,13 @@ li:hover {
 
 .arrowBox{
     font-size: 40px;
+}
+
+.fa-arrow-left{
+    float: left;
+}
+
+.fa-arrow-right{
+    float: right;
+
 }

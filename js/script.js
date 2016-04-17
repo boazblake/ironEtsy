@@ -5,55 +5,10 @@ var searchBar = document.querySelector('#searchBar')
 
 
 
-// Router
-var ironEtsyRouter = Backbone.Router.extend({
-
-    routes: {
-        'details/:id/:shopID': 'handle_Shop_Data',
-        // 'details/:shopID/:id/:id': 'handle_Shop_Data',
-        'search/:keywords': 'handle_Search_Data',
-        '*home': 'handle_Home_Page'
-    },
-
-    handle_Detail_Data: function() {
-        var etsy_Detail_Model = new DetailModel()
-        var etsy_Detail_View = new DetailView(etsy_Detail_Model)
-        etsy_Detail_Model.fetch()//.then(function(){console.log(data)})
-    },
-
-    handle_Shop_Data: function() {
-        var etsy_Shop_Collection = new ShopCollection()
-        var etsy_Shop_View = new ShopView(etsy_Shop_Collection)
-        etsy_Shop_Collection.fetch()
-    },
-
-    handle_Search_Data: function(keywords) {
-        console.log(keywords)
-
-        var Search_Model = new MultiCollection()
-        var Search_View = new MultiView(Search_Model, keywords)
-
-        Search_Model.url("keywords=" + keywords)
-
-        Search_Model.fetch()
-    },
-
-    handle_Home_Page: function() {
-        var etsy_Default_Collection = new MultiCollection()
-        var etsy_Default_View = new MultiView(etsy_Default_Collection)
-        etsy_Default_Collection.fetch()
-    },
-
-    initialize: function() {
-        Backbone.history.start()
-    }
-})
-
-
-
-
-// Models & Collections
-
+// //////////////// BACKBONE MODELS AND COLLECTIONS
+// The Models and Collections are directed by the router to get the required data from the API.
+// the model sets up the URL and parses the returned JSON object for the required data
+// 
 var DetailModel = Backbone.Model.extend({
     url: function(listing_id) {
         this.url = this._buildURL
@@ -110,7 +65,6 @@ var ShopCollection = Backbone.Collection.extend({
     },
 
     api_key: etsyKey
-
 })
 
 
@@ -143,9 +97,56 @@ var MultiCollection = Backbone.Collection.extend({
 
 
 
+// //////////// BACKBONE ROUTER
+//  sets up the routes with the corresponding methods for each view.
+//  first the model (and url is defined) then the model and view are synced and a fetch is initiated.
+var IronEtsyRouter = Backbone.Router.extend({
+    
+    initialize: function() {
+        routes: {
+            'details/:id/:shopID': 'handle_Shop_Data',
+            'search/:keywords': 'handle_Search_Data',
+            '*home': 'handle_Home_Page'
+        },
 
-// View
+        handle_Detail_Data: function() {
+            var etsy_Detail_Model = new DetailModel()
+            var etsy_Detail_View = new DetailView(etsy_Detail_Model)
+            etsy_Detail_Model.fetch()//.then(function(){console.log(data)})
+        },
 
+        handle_Shop_Data: function() {
+            var etsy_Shop_Collection = new ShopCollection()
+            var etsy_Shop_View = new ShopView(etsy_Shop_Collection)
+            etsy_Shop_Collection.fetch()
+        },
+
+        handle_Search_Data: function(keywords) {
+            console.log(keywords)
+
+            var Search_Model = new MultiCollection()
+            var Search_View = new MultiView(Search_Model, keywords)
+
+            Search_Model.url("keywords=" + keywords)
+
+            Search_Model.fetch()
+        },
+
+        handle_Home_Page: function() {
+            var etsy_Default_Collection = new MultiCollection()
+            var etsy_Default_View = new MultiView(etsy_Default_Collection)
+            etsy_Default_Collection.fetch()
+        },
+
+            Backbone.history.start()
+    }
+
+})
+
+
+// //////////// BACKBONE VIEWS
+// The view defines where and how the data is presented to the user. First the desired DOM node is defined (by class or id)
+// in the initialize function I added a loading Gif to play during the time it takes for the data to be returned from the API. This function also binds the model to the the detail context.
 var DetailView = Backbone.View.extend({
     el: '.bod',
 
@@ -168,6 +169,7 @@ var DetailView = Backbone.View.extend({
         var imageSide = ''
         var image
 
+// This was done before I learnt about .map ;)
         for (var i = 0; i < imageArray.length; i++) {
             image = imageArray[i].url_fullxfull
                 console.log(image)
@@ -181,7 +183,7 @@ var DetailView = Backbone.View.extend({
         var stringBod_image = ''
         var searchStringHed = ''
 
-
+// All this is taken care if with REACT!
 
         searchStringHed = '<div class="hed">'
         searchStringHed += '<input id="searchBar" type="text" placeholder="search Iron Etsy...">'
@@ -453,12 +455,11 @@ var MultiView = Backbone.View.extend({
             console.log('place onHoverImage')
         },
 })
-    ////////////////////////////////////////////////////
 
+// Invoking a new instance of the router protoype.
+var ironEtsy = new IronEtsyRouter()
 
-var ironEtsy = new ironEtsyRouter()
-
-// cool view on promise return
+//  view on promise return
 // .then(function(arg) {
 //             console.log(arg)
 //         })
